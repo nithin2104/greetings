@@ -21,13 +21,20 @@
  * @copyright 2024 Nithin Kumar nithin54k@gmail.com
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+function local_greetings_get_greeting($user) {
+    if ($user == null) {
+        return get_string('greetinguser', 'local_greetings');
+    }
 
-defined('MOODLE_INTERNAL') || die();
+    $country = $user->country;
+    switch ($country) {
+        case 'NZ':
+            $langstr = 'greetinguseres';
+            break;
+        default:
+            $langstr = 'greetingloggedinuser';
+            break;
+    }
 
-$string['pluginname'] = 'Greetings';
-$string['greetinguser'] = 'Greetings, user.';
-$string['greetingloggedinuser'] = 'Greetings, {$a}.';
-$string['greetinguserau'] = 'Hello, {$a}.';
-$string['greetinguseres'] = 'Hola, {$a}.';
-$string['greetinguserfj'] = 'Bula, {$a}.';
-$string['greetingusernz'] = 'Kia Ora, {$a}.';
+    return get_string($langstr, 'local_greetings', fullname($user));
+}
