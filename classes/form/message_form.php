@@ -17,19 +17,30 @@
 /**
  * Folder module version information
  *
- * @package   local_greetings
- * @copyright 2024 Nithin Kumar nithin54k@gmail.com
+ * @package   local_message
+ * @copyright 2009 Petr Skoda  {@link http://skodak.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace local_greetings\form;
+use moodleform_mod;
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Greetings';
-$string['greetings'] = 'Greetings';
-$string['greetinguser'] = 'Greetings, user.';
-$string['greetingloggedinuser'] = 'Greetings, {$a}.';
-$string['greetinguserau'] = 'Hello, {$a}.';
-$string['greetinguseres'] = 'Hola, {$a}.';
-$string['greetinguserfj'] = 'Bula, {$a}.';
-$string['greetingusernz'] = 'Kia Ora, {$a}.';
-$string['yourmessage'] = 'Your Message';
+require_once($CFG->libdir . '/formslib.php');
+
+class message_form extends \moodleform {
+    /**
+     * Define the form.
+     */
+    public function definition() {
+        $mform = $this->_form; // Don't forget the underscore!
+
+        $mform->addElement('textarea', 'message', get_string('yourmessage', 'local_greetings'));
+        $mform->setType('message', PARAM_TEXT);
+
+        $submitlabel = get_string('submit');
+        $mform->addElement('submit', 'submitmessage', $submitlabel);
+    }
+
+}
+
