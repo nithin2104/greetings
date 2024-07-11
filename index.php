@@ -36,10 +36,22 @@ require_login();
 if (isguestuser()) {
     throw new moodle_exception(' Guest users cannot access this site');
 }
+$allowpost = has_capability('local/greetings:postmessages', $context);
+$deleteanypost = has_capability('local/greetings:deleteanymessage', $context);
+$action = optional_param('action', '', PARAM_TEXT);
+if ($action == 'del') {
+    $id = required_param('id', PARAM_TEXT);
+    if ($deleteanypost) {
+        $params = ['id' => $id];
+        $DB->delete_records('local_greetings_messages', $params);
+    }
+}
+
 
 $messageform = new \local_greetings\form\message_form();
 
 if ($data = $messageform->get_data()) {
+    require_capability('local/greetings:postmessages', $context);
     $message = required_param('message', PARAM_TEXT);
 
     if (!empty($message)) {
@@ -59,7 +71,9 @@ if (isloggedin()) {
     echo get_string('greetinguser', 'local_greetings');
 }
 
-$messageform->display();
+if ($allowpost) {
+    $messageform->display();
+}
 $userfields = \core_user\fields::for_name()->with_identity($context);
 $userfieldssql = $userfields->get_sql('u');
 
@@ -69,8 +83,8 @@ $sql = "SELECT m.id, m.message, m.timecreated, m.userid {$userfieldssql->selects
       ORDER BY timecreated DESC";
 
 $messages = $DB->get_records_sql($sql);
-
 echo $OUTPUT->box_start('card-columns');
+require_capability('local/greetings:viewmessages', $context);
 
 foreach ($messages as $m) {
     echo html_writer::start_tag('div', ['class' => 'card']);
@@ -82,6 +96,17 @@ foreach ($messages as $m) {
     echo html_writer::tag('small', userdate($m->timecreated), ['class' => 'text-muted']);
     echo html_writer::end_tag('p');
     echo html_writer::end_tag('div');
+    if ($deleteanypost) {
+        echo html_writer::start_tag('p', ['class' => 'card-footer text-center']);
+        echo html_writer::link(
+            new moodle_url(
+                '/local/greetings/index.php',
+                ['action' => 'del', 'id' => $m->id]
+            ),
+            $OUTPUT->pix_icon('t/delete', '') . get_string('delete')
+        );
+        echo html_writer::end_tag('p');
+    }
     echo html_writer::end_tag('div');
 }
 
