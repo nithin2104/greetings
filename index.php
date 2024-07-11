@@ -31,6 +31,11 @@ $PAGE->set_url(new moodle_url("/local/greetings/index.php"));
 $PAGE->set_pagelayout("standard");
 $PAGE->set_title(get_string('pluginname', 'local_greetings'));
 $PAGE->set_heading(get_string('pluginname', 'local_greetings'));
+require_login();
+
+if (isguestuser()) {
+    throw new moodle_exception(' Guest users cannot access this site');
+}
 
 $messageform = new \local_greetings\form\message_form();
 
@@ -68,13 +73,13 @@ $messages = $DB->get_records_sql($sql);
 echo $OUTPUT->box_start('card-columns');
 
 foreach ($messages as $m) {
-    echo html_writer::start_tag('div', array('class' => 'card'));
-    echo html_writer::start_tag('div', array('class' => 'card-body'));
-    echo html_writer::tag('p', $m->message, array('class' => 'card-text'));
+    echo html_writer::start_tag('div', ['class' => 'card']);
+    echo html_writer::start_tag('div', ['class' => 'card-body']);
+    echo html_writer::tag('p', format_text($m->message, FORMAT_PLAIN), ['class' => 'card-text']);
     echo html_writer::tag('p', get_string('postedby', 'local_greetings',
-    $m->firstname . ' ' . $m->lastname), array('class' => 'card-text'));
-    echo html_writer::start_tag('p', array('class' => 'card-text'));
-    echo html_writer::tag('small', userdate($m->timecreated), array('class' => 'text-muted'));
+    $m->firstname . ' ' . $m->lastname), ['class' => 'card-text']);
+    echo html_writer::start_tag('p', ['class' => 'card-text']);
+    echo html_writer::tag('small', userdate($m->timecreated), ['class' => 'text-muted']);
     echo html_writer::end_tag('p');
     echo html_writer::end_tag('div');
     echo html_writer::end_tag('div');
