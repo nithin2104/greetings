@@ -34,8 +34,8 @@ class message_form extends \moodleform {
      */
     public function definition() {
         $mform = $this->_form; // Don't forget the underscore!
-
-        $mform->addElement('textarea', 'message', get_string('yourmessage', 'local_greetings'));
+        $mform->addElement('textarea', 'message', get_string('yourmessage', 'local_greetings'),
+        'wrap="virtual" cols="15" rows="5"');
         $mform->setType('message', PARAM_TEXT);
 
         $submitlabel = get_string('submit');

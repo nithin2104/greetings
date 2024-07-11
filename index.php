@@ -24,6 +24,7 @@
 
 require_once('../../config.php');
 require_once($CFG->dirroot. '/local/greetings/lib.php');
+global $DB, $OUTPUT, $USER;
 $context = CONTEXT_SYSTEM::instance();
 $PAGE->set_context($context);
 $PAGE->set_url(new moodle_url("/local/greetings/index.php"));
@@ -33,6 +34,17 @@ $PAGE->set_heading(get_string('pluginname', 'local_greetings'));
 
 $messageform = new \local_greetings\form\message_form();
 
+if ($data = $messageform->get_data()) {
+    $message = required_param('message', PARAM_TEXT);
+
+    if (!empty($message)) {
+        $record = new stdClass;
+        $record->message = $message;
+        $record->timecreated = time();
+
+        $DB->insert_record('local_greetings_messages', $record);
+    }
+}
 
 echo $OUTPUT->header();
 
@@ -43,8 +55,22 @@ if (isloggedin()) {
 }
 
 $messageform->display();
-$data = $messageform->get_data();
-$message = required_param('message', PARAM_TEXT);
-echo $OUTPUT->heading($message, 4);
+$messages = $DB->get_records('local_greetings_messages');
+
+echo $OUTPUT->box_start('card-columns');
+
+foreach ($messages as $m) {
+    echo html_writer::start_tag('div', array('class' => 'card'));
+    echo html_writer::start_tag('div', array('class' => 'card-body'));
+    echo html_writer::tag('p', $m->message, array('class' => 'card-text'));
+    echo html_writer::start_tag('p', array('class' => 'card-text'));
+    echo html_writer::tag('small', userdate($m->timecreated), array('class' => 'text-muted'));
+    echo html_writer::end_tag('p');
+    echo html_writer::end_tag('div');
+    echo html_writer::end_tag('div');
+}
+
+echo $OUTPUT->box_end();
+
 echo $OUTPUT->footer();
 
