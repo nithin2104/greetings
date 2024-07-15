@@ -51,7 +51,8 @@ if (!$result = $DB->get_record('local_greetings_messages', ['id' => $id])) {
 $canedit = has_capability('local/greetings:deleteanymessage', $context) ||
     (has_capability('local/greetings:deleteownmessage', $context) && $result->userid == $USER->id);
 
-$messageform = new \local_greetings\form\message_form(new moodle_url('/local/greetings/edit.php', ['id' => $id]), ['message' => $result->message]);
+$messageform = new \local_greetings\form\message_form(new moodle_url('/local/greetings/edit.php',
+['id' => $id]), ['message' => $result->message]);
 
 if ($canedit && $data = $messageform->get_data()) {
     $message = required_param('message', PARAM_TEXT);
