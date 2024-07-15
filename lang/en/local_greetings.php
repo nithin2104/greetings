@@ -40,5 +40,7 @@ $string['greetings:deleteownmessage'] = 'Delete own message on the Greetings wal
 $string['greetings:deleteanymessage'] = 'Delete any message on the Greetings wall';
 $string['messagecardbgcolor'] = 'Message card color';
 $string['messagecardbgcolordesc'] = 'Background color of the message card';
-
+$string['editmessage'] = 'Edit Message';
+$string['norecordfound'] = 'No record found!';
+$string['cannoteditmessage'] = 'You cannot edit this message';
 
